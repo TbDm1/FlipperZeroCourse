@@ -1,0 +1,29 @@
+import socket
+
+def handle_client(client_socket):
+    """Handles a client connection."""
+    try:
+        while True:
+            command = input("SHELL> ")  # Get command from the user
+            if command.lower() == 'exit':
+                client_socket.send('exit\n'.encode())  # Command to close the connection
+                break
+            client_socket.send((command + '\n').encode())  # Send command to the client
+            response = client_socket.recv(4096)  # Receive the response
+            print(response.decode(), end="")  # Print the received response
+    finally:
+        client_socket.close()
+
+def main():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('0.0.0.0', 13337))  # Listen on all interfaces
+    server_socket.listen(5)
+    print("Listening on port 13337...")
+
+    while True:
+        client_socket, addr = server_socket.accept()
+        print(f"Accepted connection from {addr}")
+        handle_client(client_socket)
+
+if __name__ == '__main__':
+    main()
