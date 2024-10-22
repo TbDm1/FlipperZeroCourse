@@ -1,22 +1,29 @@
-Command,Explanation
-STRING [text],Types the specified text as if typed on a keyboard.
-DELAY [milliseconds],Pauses execution for the given number of milliseconds.
-ENTER,Simulates pressing the Enter key.
-TAB,Simulates pressing the Tab key.
-ESCAPE / ESC,Simulates pressing the Escape key.
-SPACE,Simulates pressing the space bar.
-BACKSPACE,Simulates pressing the Backspace key.
-DELETE,Simulates pressing the Delete key.
-ARROW (UP | DOWN | LEFT | RIGHT),Simulates pressing the specified arrow key.
-CTRL [key],Simulates pressing Control with another key.
-ALT [key],Simulates pressing Alt with another key.
-SHIFT [key],Simulates pressing Shift with another key.
-GUI [key],Simulates pressing the Windows (or Command) key with another key.
-"F1, F2, ..., F12",Simulates pressing the function keys (F1 to F12).
-REPEAT [number],Repeats the next command the specified number of times.
-REM [comment],"Adds a comment in the script, ignored during execution."
-DELAYRANDOM [min] [max],Introduces a random delay between the specified minimum and maximum values.
-TYPE [keycode],Types the specific keycode instead of a named key.
-LOOP [iterations],Repeats a block of commands for a set number of iterations.
-ENDLOOP,Ends the loop created by the LOOP command.
-SHIFTGUI [key],Simulates pressing Shift and the Windows (or Command) key together.
+Command	      Explanation
+REM	          Adds a comment in the script (ignored during execution)
+DELAY	        Introduces a delay (in milliseconds) before the next command
+STRING	      Types the specified text
+ENTER	        Simulates pressing the Enter key
+ESCAPE	      Simulates pressing the Escape key
+TAB	          Simulates pressing the Tab key
+SPACE	        Simulates pressing the Spacebar
+SHIFT	        Simulates holding Shift key or Shift+[key] combination
+ALT	          Simulates holding Alt key or Alt+[key] combination
+CTRL	        Simulates holding Ctrl key or Ctrl+[key] combination
+DOWNARROW	    Simulates pressing the Down Arrow key
+UPARROW	      Simulates pressing the Up Arrow key
+LEFTARROW	    Simulates pressing the Left Arrow key
+RIGHTARROW	  Simulates pressing the Right Arrow key
+GUI r	        Simulates pressing the Windows (GUI) key
+MENU	        Simulates pressing the Menu key (Context menu key)
+DELETE	      Simulates pressing the Delete key
+BACKSPACE	    Simulates pressing the Backspace key
+CAPSLOCK	    Toggles Caps Lock
+NUMLOCK	      Toggles Num Lock
+SCROLLLOCK	  Toggles Scroll Lock
+INSERT	      Simulates pressing the Insert key
+HOME	        Simulates pressing the Home key
+END	          Simulates pressing the End key
+PAGEUP	      Simulates pressing the Page Up key
+PAGEDOWN	    Simulates pressing the Page Down key
+REPEAT	      Repeats the last command specified number of times
+STRING_DELAY  Sets a default delay between characters in a string in milliseconds
