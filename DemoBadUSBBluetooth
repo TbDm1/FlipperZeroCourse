@@ -1,4 +1,4 @@
-REM this script create a directory on your in your rootfolder called text and then create a test.txt file within the directory, clear the cmd and show the content of the textfile
+REM this script create a directory on your in your homefolder called text and then create a test.txt file within the directory, clear the cmd and show the content of the textfile
 
 DELAY 500
 REM this will open your terminal
