@@ -1,4 +1,5 @@
 import socket
+import time
 
 def handle_client(client_socket):
     """Handles a client connection."""
@@ -8,9 +9,20 @@ def handle_client(client_socket):
             if command.lower() == 'exit':
                 client_socket.send('exit\n'.encode())  # Command to close the connection
                 break
-            client_socket.send((command + '\n').encode())  # Send command to the client
-            response = client_socket.recv(4096)  # Receive the response
-            print(response.decode(), end="")  # Print the received response
+            
+            # Send the command to the client
+            client_socket.send((command + '\n').encode())
+            
+            # Wait to receive and print the response
+            response = client_socket.recv(4096).decode()  # Initial response chunk
+            while True:
+                print(response, end="")  # Print each chunk
+                if len(response) < 4096:
+                    break  # Exit if this was the last chunk
+                response = client_socket.recv(4096).decode()  # Receive more if available
+            
+            time.sleep(0.5)  # Small delay before accepting the next command
+
     finally:
         client_socket.close()
 
